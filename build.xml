@@ -1655,10 +1655,11 @@ JAVA=/usr/bin/java
   </target>
 
   <target name="checkstyle" depends="init" description="Runs Checkstyle for a code quality report">
-    <property name="checkstyle.location" value="lib/checkstyle-5.6-all.jar" />
     <property name="checkstyle.config" value="checkstyle.xml" />
     <path id="checkstyle-classpath">
-      <pathelement location="${checkstyle.location}"/>
+      <fileset dir="lib">
+        <include name="checkstyle*.jar"/>
+      </fileset>
     </path>
     <taskdef name="checkstyle" classname="com.puppycrawl.tools.checkstyle.CheckStyleTask" classpathref="checkstyle-classpath"/>
     <mkdir dir="${build}"/>
