@@ -80,21 +80,21 @@ public class ParsedURLDataProtocolHandler
 
         idx = urlStr.indexOf(',',pidx);
         if ((idx != -1) && (idx != pidx)) {
-            ret.host = urlStr.substring(pidx, idx);
+            ret.mediaType = urlStr.substring(pidx, idx);
             pidx = idx+1;
 
-            int aidx = ret.host.lastIndexOf(';');
-            if ((aidx == -1) || (aidx==ret.host.length())) {
-                ret.contentType = ret.host;
+            int aidx = ret.mediaType.lastIndexOf(';');
+            if ((aidx == -1) || (aidx==ret.mediaType.length())) {
+                ret.contentType = ret.mediaType;
             } else {
-                String enc = ret.host.substring(aidx+1);
+                String enc = ret.mediaType.substring(aidx+1);
                 idx = enc.indexOf('=');
                 if (idx == -1) {
                     // It is an encoding.
                     ret.contentEncoding = enc;
-                    ret.contentType = ret.host.substring(0, aidx);
+                    ret.contentType = ret.mediaType.substring(0, aidx);
                 } else {
-                    ret.contentType = ret.host;
+                    ret.contentType = ret.mediaType;
                 }
                 // if theres a charset pull it out.
                 aidx = 0;
@@ -107,14 +107,14 @@ public class ParsedURLDataProtocolHandler
                         String param = ret.contentType.substring(aidx, idx);
                         int eqIdx = param.indexOf('=');
                         if ((eqIdx != -1) &&
-                            (CHARSET.equals(param.substring(0,eqIdx)))) 
+                            (CHARSET.equals(param.substring(0,eqIdx))))
                             ret.charset = param.substring(eqIdx+1);
                         aidx = idx+1;
                     }
                 }
             }
         }
-        
+
         if (pidx < urlStr.length()) {
             ret.path = urlStr.substring(pidx);
         }
@@ -128,6 +128,7 @@ public class ParsedURLDataProtocolHandler
     static class DataParsedURLData extends ParsedURLData {
 
         String charset;
+        String mediaType;
 
         public boolean complete() {
             return path != null;
@@ -135,8 +136,8 @@ public class ParsedURLDataProtocolHandler
 
         public String getPortStr() {
             String portStr = "data:";
-            if (host != null) {
-                portStr += host;
+            if (mediaType != null) {
+                portStr += mediaType;
             }
             portStr += ",";
             return portStr;
