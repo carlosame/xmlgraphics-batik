@@ -4,8 +4,16 @@ github:
   labels:
     - batik
     - apache
-  protected_branches:
-    main:
+  rulesets:
+    - name: "Branch Protection"
+      type: branch
+      branches:
+        includes:
+          - "main"
+          - "batik*"
+          - "release*"
+      restrict_deletion: true
+      restrict_force_push: true
       required_linear_history: true
 
 notifications:
