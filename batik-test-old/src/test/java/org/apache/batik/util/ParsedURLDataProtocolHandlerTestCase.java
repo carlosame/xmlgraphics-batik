@@ -18,6 +18,7 @@
  */
 package org.apache.batik.util;
 
+import org.apache.batik.transcoder.ErrorHandler;
 import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
@@ -47,5 +48,34 @@ public class ParsedURLDataProtocolHandlerTestCase {
                 "The document references a external resource (http://example.com/s/favicon.png) " +
                 "which comes from different location than the document itself. This is not allowed " +
                 "for security reasons and that resource will not be loaded.", ex.getMessage());
+    }
+
+    @Test
+    public void testColorProfileBaseURL() throws TranscoderException {
+        String svgContent = "<svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" " +
+                "xml:base=\"https://web.example/\">\n"+
+                "<color-profile name=\"p\" xml:base=\"https://web.example/\" xlink:href=\"meowmeow\"/>\n"+
+                "<circle fill=\"rgb(255,0,0) icc-color(p,1,0,0)\" cx=\"50\" cy=\"50\" r=\"40\"/>\n"+
+                "</svg>\n";
+        PNGTranscoder transcoder = new PNGTranscoder();
+        TranscoderInput input = new TranscoderInput(new ByteArrayInputStream(svgContent.getBytes()));
+        ByteArrayOutputStream ostream = new ByteArrayOutputStream();
+        TranscoderOutput output = new TranscoderOutput(ostream);
+        final String[] ex = {""};
+        transcoder.setErrorHandler(new ErrorHandler() {
+            public void error(TranscoderException e) {
+                ex[0] = e.getMessage();
+            }
+            public void fatalError(TranscoderException ex) {
+            }
+            public void warning(TranscoderException ex) {
+            }
+        });
+        transcoder.transcode(input, output);
+        Assert.assertEquals("null\n" +
+                "Enclosed Exception:\n" +
+                "Could not access the current document URL when trying to load an external resource file:meowmeow. " +
+                "The external resource will not be loaded as it is not possible to verify it comes " +
+                "from the same location as the document.", ex[0]);
     }
 }

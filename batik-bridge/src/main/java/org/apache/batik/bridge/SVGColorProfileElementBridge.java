@@ -31,6 +31,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.svg.SVGDocument;
 
 /**
  * This class bridges an SVG <code>color-profile</code> element with an
@@ -105,7 +106,8 @@ public class SVGColorProfileElementBridge extends AbstractSVGBridge
         String href = XLinkSupport.getXLinkHref(profile);
         ICC_Profile p = null;
         if (href != null) {
-            String baseURI = profile.getBaseURI();
+            SVGDocument svgDoc = (SVGDocument)paintedElement.getOwnerDocument();
+            String baseURI = svgDoc.getURL();
             ParsedURL pDocURL = null;
             if (baseURI != null) {
                 pDocURL = new ParsedURL(baseURI);
