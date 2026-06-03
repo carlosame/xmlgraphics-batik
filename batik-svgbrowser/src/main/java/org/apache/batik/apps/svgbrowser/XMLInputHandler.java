@@ -23,6 +23,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashMap;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
@@ -160,9 +161,11 @@ public class XMLInputHandler implements SquiggleInputHandler {
     public void handle(ParsedURL purl, JSVGViewerFrame svgViewerFrame) throws Exception {
         String uri = purl.toString();
 
-        TransformerFactory tFactory 
-            = TransformerFactory.newInstance();
-        
+        TransformerFactory tFactory = TransformerFactory.newInstance();
+        tFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        tFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        tFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, "");
+
         // First, load the input XML document into a generic DOM tree
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setValidating(false);
